@@ -4,7 +4,6 @@ let s:save_cpo = &cpo
 set cpo&vim
 
 if !exists(':RtmAddTask')
-  " add command
 	command! RtmAddTask call rtm#addTask()
 endif
 
