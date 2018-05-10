@@ -27,7 +27,8 @@ if !exists('g:setting_path')
 	finish
 endif
 
-function! rtm#getApiSig(...) abort
+" get API signiture
+function! rtm#getApiSig(...) abort "{{{1
   let q = ''
 
   let l:query_params = a:000[0]
@@ -36,8 +37,10 @@ function! rtm#getApiSig(...) abort
   endfor
   return s:CalcMd5(g:rtm_secret_key.'api_key'.g:rtm_api_key.q)
 endfunction
+"}}}1
 
-function! rtm#getToken() abort
+" Get token
+function! rtm#getToken() abort "{{{1
 	if filereadable(g:setting_path)
 		let fp = readfile(g:setting_path)
 		return fp[0]
@@ -85,8 +88,10 @@ function! rtm#getToken() abort
 
   return l:content['rsp']['auth']['token']
 endfunction
+" }}}
 
-function! rtm#createTimelines(token) abort
+" Create timeline
+function! rtm#createTimelines(token) abort "{{{1
   let l:query = {}
 	let l:query['auth_token'] = a:token
 	let l:query['format'] = 'json'
@@ -99,8 +104,10 @@ function! rtm#createTimelines(token) abort
 
   return l:content.rsp.timeline
 endfunction
+" }}}1
 
-function! rtm#addTask() abort
+" Add task
+function! rtm#addTask() abort "{{{1
 
   let l:token = rtm#getToken()
 
@@ -119,9 +126,10 @@ function! rtm#addTask() abort
 
   echo 'task added.'
 endfunction
+"}}}
 
 " Call is.gd API to shorten a URL.
-function! s:call_isgd(url)
+function! s:call_isgd(url) "{{{1
 	redraw
 
 	echo "Sending request to is.gd..."
@@ -130,9 +138,10 @@ function! s:call_isgd(url)
 
 	return res.content
 endfunction
+" }}}1
 
 " URL-encode a string.
-function! s:url_encode(str)
+function! s:url_encode(str) "{{{1
 	return substitute(a:str, '[^a-zA-Z0-9_.~-]', '\=s:url_encode_char(submatch(0))', 'g')
 endfunction
 
@@ -147,6 +156,7 @@ function! s:url_encode_char(c)
 	endfor
 	return s
 endfunction
+"}}}1
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
