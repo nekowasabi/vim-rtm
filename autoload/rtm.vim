@@ -1,5 +1,7 @@
 scriptencoding utf-8
 
+" ok
+
 let s:save_cpo = &cpo
 set cpo&vim
 
