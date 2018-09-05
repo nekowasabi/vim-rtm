@@ -7,5 +7,6 @@ if !exists(':RtmAddTask')
 	command! RtmAddTask call rtm#addTask()
 endif
 
+" test
 let &cpo = s:save_cpo
 unlet s:save_cpo
