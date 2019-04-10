@@ -1,16 +1,15 @@
 scriptencoding utf-8
 
-" ok
-
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! s:CalcMd5(str) abort
+function! s:CalcMd5(str) abort " {{{1
 	let s:V = vital#of('vital')
 	let s:Hash = s:V.import('Hash.MD5')
 
   return s:Hash.sum(a:str)
 endfunction
+" }}}1
 
 let s:auth_url = 'http://www.rememberthemilk.com/services/auth/'
 let s:rest_url = 'https://api.rememberthemilk.com/services/rest/'
@@ -129,6 +128,50 @@ function! rtm#addTask() abort "{{{1
   echo 'task added.'
 endfunction
 "}}}
+
+" Get all tasks
+function! rtm#getAllTasks() abort " {{{
+	let l:token = rtm#getToken()
+
+  let l:query = {}
+  let l:query['auth_token'] = l:token
+  let l:query['format'] = 'json'
+  let l:query['method'] = 'rtm.tasks.getList'
+  let l:query['timeline'] = rtm#createTimelines(l:token)
+
+  let l:api_sig = rtm#getApiSig(l:query)
+  let l:url = s:rest_url . '?method='.l:query['method'].'&api_key='.g:rtm_api_key . '&auth_token='.l:token . '&format=json' .  '&timeline='.l:query['timeline'] . '&api_sig='.l:api_sig
+  echo webapi#http#get(l:url)
+
+endfunction
+" }}}
+
+" Get all lists
+function! rtm#getAllLists() abort " {{{
+	let l:token = rtm#getToken()
+
+  let l:query = {}
+  let l:query['auth_token'] = l:token
+  let l:query['format'] = 'json'
+  let l:query['method'] = 'rtm.lists.getList'
+  let l:query['timeline'] = rtm#createTimelines(l:token)
+
+  let l:api_sig = rtm#getApiSig(l:query)
+  let l:url = s:rest_url . '?method='.l:query['method'].'&api_key='.g:rtm_api_key . '&auth_token='.l:token . '&format=json' .  '&timeline='.l:query['timeline'] . '&api_sig='.l:api_sig
+  let l:res = webapi#http#get(l:url)
+  let l:content = webapi#json#decode(l:res['content'])
+
+	let l:task_lists = l:content.rsp.lists.list
+
+	let s:List = s:V.import('Data.List')
+
+	let l:specific_list = s:List.filter(l:task_lists, "v:val.name == '.a'")
+	echo l:specific_list[0].id
+
+endfunction
+" }}}
+
+
 
 " Call is.gd API to shorten a URL.
 function! s:call_isgd(url) "{{{1
