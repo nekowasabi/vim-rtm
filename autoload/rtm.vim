@@ -161,17 +161,42 @@ function! rtm#getAllLists() abort " {{{
   let l:res = webapi#http#get(l:url)
   let l:content = webapi#json#decode(l:res['content'])
 
-	let l:task_lists = l:content.rsp.lists.list
-
-	let s:List = s:V.import('Data.List')
-
-	let l:specific_list = s:List.filter(l:task_lists, "v:val.name == '.a'")
-	echo l:specific_list[0].id
-
+	return l:content.rsp.lists.list
 endfunction
 " }}}
 
+" Get specified list
+function! rtm#getSpecifiedList() abort " {{{
+	let l:token = rtm#getToken()
 
+  let l:query = {}
+  let l:query['auth_token'] = l:token
+	let l:query['filter'] = 'status:incomplete'
+  let l:query['format'] = 'json'
+
+  let l:task_lists = rtm#getAllLists()
+	let l:list_name = '.a'
+  let l:query['list_id'] = s:extractListId(l:task_lists, l:list_name)
+
+  let l:query['method'] = 'rtm.tasks.getList'
+  let l:query['timeline'] = rtm#createTimelines(l:token)
+
+  let l:api_sig = rtm#getApiSig(l:query)
+  let l:url = s:rest_url . '?method='.l:query['method'].'&api_key='.g:rtm_api_key . '&auth_token='.l:token . '&filter=' . l:query['filter'] . '&format=json' .  '&list_id='.l:query['list_id'] . '&timeline='.l:query['timeline'] . '&api_sig='.l:api_sig
+  let l:res = webapi#http#get(l:url)
+  let l:content = webapi#json#decode(l:res['content'])
+
+	echo l:content
+endfunction
+" }}}
+
+" Get list's id
+function! s:extractListId(task_lists, list_name) abort
+ 	let s:List = s:V.import('Data.List')
+
+	let l:specific_list = s:List.filter(a:task_lists, "v:val.name == '". a:list_name . "'")
+	return l:specific_list[0].id
+endfunction
 
 " Call is.gd API to shorten a URL.
 function! s:call_isgd(url) "{{{1

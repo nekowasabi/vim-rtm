@@ -15,7 +15,9 @@ if !exists(':RtmGetAllLists')
 	command! RtmGetAllLists call rtm#getAllLists()
 endif
 
-
+if !exists(':RtmGetSpecifiedList')
+	command! RtmGetSpecifiedList call rtm#getSpecifiedList()
+endif
 
 " test
 let &cpo = s:save_cpo
