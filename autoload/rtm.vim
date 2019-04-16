@@ -127,6 +127,39 @@ function! rtm#addTask() abort "{{{1
 
   echo 'task added.'
 endfunction
+
+function! rtm#addTaskFromBuffer() abort "{{{1
+
+  let l:tasks = getline(0, line("$"))
+
+  call s:do_partial(l:tasks, 0)
+endfunction
+
+function! s:do_partial(partial, timer, ...) 
+
+  let l:token = rtm#getToken()
+
+  let l:query = {}
+  let l:query['auth_token'] = l:token
+  let l:query['format'] = 'json'
+  let l:query['name'] = a:partial[0]
+  let l:query['method'] = 'rtm.tasks.add'
+  let l:query['timeline'] = rtm#createTimelines(l:token)
+
+  let l:api_sig = rtm#getApiSig(l:query)
+  let l:url = s:rest_url . '?method=rtm.tasks.add&api_key='.g:rtm_api_key . '&auth_token='.rtm#getToken() . '&format=json' . '&name='.s:url_encode(l:query['name']) . '&timeline='.l:query['timeline'] . '&api_sig='.l:api_sig
+  call webapi#http#get(l:url)
+  echo l:query['name']
+
+  if len(a:partial) > 1
+    call timer_start(500, function('s:do_partial', [a:partial[1:]]))
+  endif
+
+  redraw
+
+  echo 'task added.'
+endfunction
+
 "}}}
 
 " Get all tasks

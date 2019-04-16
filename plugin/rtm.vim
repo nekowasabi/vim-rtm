@@ -7,6 +7,10 @@ if !exists(':RtmAddTask')
 	command! RtmAddTask call rtm#addTask()
 endif
 
+if !exists(':RtmAddTaskFromBuffer')
+	command! RtmAddTaskFromBuffer call rtm#addTaskFromBuffer()
+endif
+
 if !exists(':RtmGetAllTasks')
 	command! RtmGetAllTasks call rtm#getAllTasks()
 endif
