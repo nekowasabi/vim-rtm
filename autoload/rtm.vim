@@ -135,6 +135,15 @@ function! rtm#addTaskFromBuffer() abort "{{{1
   call s:do_partial(l:tasks, 0)
 endfunction
 
+function! rtm#addTaskFromSelected() abort "{{{1
+
+  let l:tasks = split(s:get_visual_text(), '\n')
+
+  call s:do_partial(l:tasks, 0)
+endfunction
+
+
+
 function! s:do_partial(partial, timer, ...) 
 
   let l:token = rtm#getToken()
@@ -161,6 +170,31 @@ function! s:do_partial(partial, timer, ...)
 endfunction
 
 "}}}
+
+ "ビジュアルモードで選択中のテクストを取得する {{{
+function! s:get_visual_text()
+    try
+        " ビジュアルモードの選択開始/終了位置を取得
+        let pos = getpos('')
+        normal `<
+        let start_line = line('.')
+        let start_col = col('.')
+        normal `>
+        let end_line = line('.')
+        let end_col = col('.')
+        call setpos('.', pos)
+
+        let tmp = @@
+        silent normal gvy
+        let selected = @@
+        let @@ = tmp
+        return selected
+    catch
+        return ''
+    endtry
+endfunction
+" }}}
+
 
 " Get all tasks
 function! rtm#getAllTasks() abort " {{{

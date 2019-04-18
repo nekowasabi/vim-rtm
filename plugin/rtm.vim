@@ -11,6 +11,10 @@ if !exists(':RtmAddTaskFromBuffer')
 	command! RtmAddTaskFromBuffer call rtm#addTaskFromBuffer()
 endif
 
+if !exists(':RtmAddTaskFromSelected')
+	command! -range RtmAddTaskFromSelected call rtm#addTaskFromSelected()
+endif
+
 if !exists(':RtmGetAllTasks')
 	command! RtmGetAllTasks call rtm#getAllTasks()
 endif
